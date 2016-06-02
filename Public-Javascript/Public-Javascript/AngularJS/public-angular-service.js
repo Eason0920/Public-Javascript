@@ -8,6 +8,12 @@
  * @author Eason
  * @since 20160325
  * @version 2
+ * 
+ * @description 新增存取 Cookies 服務模組
+ * @author Eason
+ * @since 20160602
+ * @version 3
+ * 
  */
 
 //工具服務模組
@@ -213,6 +219,47 @@ toolsServiceModule.factory('timeZone', ['ajax', '$q', function (ajax, $q) {
     return {
         getTimeZoneInfo: getTimeZoneInfo
     }
+}]);
+
+/**
+ * @description 存取 Cookies 服務模組
+ * @requires //ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular-cookies.js
+ */
+var cookiesServiceModule = angular.module('cookiesServiceModule', ['ngCookies']);
+
+//取得 Cookies 內容服務
+cookiesServiceModule.factory('getCookiesService', ['$cookies', function ($cookies) {
+
+    /**
+     * @description 依據 Cookie 名稱取得相對應的值
+     * @param name - Cookie 名稱
+     * @param key - Cookie 值 key 名
+     * @param symbo - 多個 Cookie 值的分隔符號
+     * @returns 成功 - Cookie 值
+     *          失敗 - undefined
+     */
+    var getCookieString = function (name, key, symbo) {
+        var cookieValue = $cookies.get(name);
+
+        if (cookieValue && key && symbo) {
+            var valueAry = cookieValue.split(symbo);
+
+            for (var i in valueAry) {
+                var value = valueAry[i].split('=');
+
+                if (value[0] === key) {
+                    return value[1];
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+
+    return {
+        getCookieString: getCookieString
+    }
+
 }]);
 
 //地理位置服務模組
