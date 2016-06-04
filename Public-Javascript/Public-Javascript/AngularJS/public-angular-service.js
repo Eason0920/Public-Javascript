@@ -14,6 +14,11 @@
  * @since 20160602
  * @version 3
  * 
+ * @description Cookies 服務模組新增刪除 cookie service
+ * @author Eason
+ * @since 20160604
+ * @version 3.1
+ * 
  */
 
 //工具服務模組
@@ -261,6 +266,50 @@ cookiesServiceModule.factory('getCookiesService', ['$cookies', function ($cookie
     }
 
 }]);
+
+//刪除 Cookies 內容服務
+cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesService',
+    function ($cookies, getCookiesService) {
+
+        /**
+         * @description 依據 Cookie 名稱刪除相對應的值
+         * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
+         * @param name - Cookie 名稱
+         * @param key - Cookie 值 key 名
+         * @param symbo - 多個 Cookie 值的分隔符號
+         */
+        var deleteCookieString = function (name, path, key, symbo) {
+
+            if (key && symbo) {
+                var cookieValue = getCookiesService.getCookieString(name);
+
+                if (cookieValue) {
+                    var valueAry = cookieValue.split(symbo);
+
+                    for (var i in valueAry) {
+                        var value = valueAry[i].split('=');
+
+                        if (value[0] === key) {
+
+                            //去除前後分隔符號
+                            cookieValue = cookieValue.replace(value[0] + '=' + value[1] + symbo, '')
+                                                     .replace(symbo + value[0] + '=' + value[1], '')
+                                                     .replace(value[0] + '=' + value[1], '');
+                            $cookies.put(name, cookieValue, { path: path || '/' });
+                        }
+                    }
+                }
+
+            } else {
+                $cookies.remove(name, { path: path || '/' });
+            }
+        }
+
+        return {
+            deleteCookieString: deleteCookieString
+        }
+
+    }]);
 
 //地理位置服務模組
 var geoLocationServiceModule = angular.module('geoLocationServiceModule', []);
