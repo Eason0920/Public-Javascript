@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @description AngularJS 公用服務模組版本建立
  * @author Eason
  * @since 20160303
@@ -17,8 +17,12 @@
  * @description Cookies 服務模組新增刪除 cookie service
  * @author Eason
  * @since 20160604
- * @version 3.1
+ * @version 4
  * 
+ * @description ajax 服務模組新增 put 資料傳送模式
+ * @author Eason
+ * @since 20160930
+ * @version 5
  */
 
 //工具服務模組
@@ -40,6 +44,7 @@ toolsServiceModule.factory('ajax', ['$http', function ($http) {
     }
 
     obj.post = function (url, params) {
+        params = params || {};
         return $http.post(url, params, { cache: false }).then(function (response) {
             //成功 response 內容範例：{data: "1", status: 200, config: Object, statusText: "OK"}
             return response;
@@ -50,6 +55,7 @@ toolsServiceModule.factory('ajax', ['$http', function ($http) {
     }
 
     obj.postWithFormData = function (url, formData) {
+        formData = formData || new FormData();
         return $http.post(url, formData, {
             cache: false,
             transformRequest: angular.identity,
@@ -66,6 +72,17 @@ toolsServiceModule.factory('ajax', ['$http', function ($http) {
     obj.jsonp = function (url, params) {
         params = params || {};
         return $http.jsonp(url, { params: params, cache: false }).then(function (response) {
+            //成功 response 內容範例：{data: "1", status: 200, config: Object, statusText: "OK"}
+            return response;
+        }, function (error) {
+            //404 error 物件內容範例：{data: Object, status: 404, config: Object, statusText: "Not Found"}
+            return error;
+        });
+    }
+
+    obj.put = function (url, params) {
+        params = params || {};
+        return $http.put(url, params, { cache: false }).then(function (response) {
             //成功 response 內容範例：{data: "1", status: 200, config: Object, statusText: "OK"}
             return response;
         }, function (error) {
