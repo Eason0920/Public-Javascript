@@ -1,8 +1,13 @@
-﻿/**
+/**
  * @description Javascript 公用函式庫版本建立
  * @author Eason
  * @since 20160602
  * @version 1
+ * 
+ * @description watch 函式增加判斷是否有 console 物件才執行 (預防 IE8、9發生錯誤)
+ * @author Eason
+ * @since 20161003
+ * @version 2
  */
 
 //XML物件轉字串
@@ -54,10 +59,12 @@ var detectIEVersion = function (ver) {
 //檢視主控台自訂的除錯記錄
 //可傳入要查看的物件或使用格式字元傳入多參數(格式字元, 參數)
 var watch = function () {
-    if (arguments.length > 1) {
-        console.debug.apply(console, arguments);
-    } else {
-        console.debug(arguments[0]);
+    if(window.console){
+        if (arguments.length > 1) {
+            console.debug.apply(console, arguments);
+        } else {
+            console.debug(arguments[0]);
+        }
     }
 }
 
