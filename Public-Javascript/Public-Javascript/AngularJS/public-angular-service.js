@@ -23,6 +23,11 @@
  * @author Eason
  * @since 20160930
  * @version 5
+ * 
+ * @description ajax put 函式功能修正
+ * @author Eason
+ * @since 20161003
+ * @version 6
  */
 
 //工具服務模組
@@ -80,9 +85,10 @@ toolsServiceModule.factory('ajax', ['$http', function ($http) {
         });
     }
 
-    obj.put = function (url, params) {
-        params = params || {};
-        return $http.put(url, params, { cache: false }).then(function (response) {
+    obj.put = function (url, formBodyParams, urlParams) {
+        formBodyParams = formBodyParams || {};
+        urlParams = urlParams || {};
+        return $http.put(url, formBodyParams, { params: urlParams, cache: false }).then(function (response) {
             //成功 response 內容範例：{data: "1", status: 200, config: Object, statusText: "OK"}
             return response;
         }, function (error) {
