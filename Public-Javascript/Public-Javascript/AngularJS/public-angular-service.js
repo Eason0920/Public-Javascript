@@ -28,6 +28,11 @@
  * @author Eason
  * @since 20161003
  * @version 6
+ *
+ * @description cookie 模組增加 cookie 寫入服務
+ * @author Eason
+ * @since 20161018
+ * @version 7
  */
 
 //工具服務模組
@@ -284,8 +289,60 @@ cookiesServiceModule.factory('getCookiesService', ['$cookies', function ($cookie
         return cookieValue;
     }
 
+    /**
+    * @description 依據 cookie key 取得相對應的物件
+    * @param key - cookie 值 key 名
+    * @returns 成功 - cookie 值
+    *          失敗 - undefined
+    */
+    var getCookieObject = function (key) {
+        var cookieObject = $cookies.get(key);
+        return ((cookieObject) ? JSON.parse($cookies.get(key)) : cookieObject);
+    }
+
     return {
-        getCookieString: getCookieString
+        getCookieString: getCookieString,
+        getCookieObject: getCookieObject
+    }
+
+}]);
+
+//寫入 Cookies 內容服務
+cookiesServiceModule.factory('setCookiesService', ['$cookies', function ($cookies) {
+    var config = {
+        path: null,
+        expires: null
+    }
+
+    /**
+     * @description 寫入 cookie 字串值
+     * @param key - cookie key
+     * @param value - cookie value
+     * @param path - 要寫入的 cookie 應用程式路徑位置 (預設為根路徑)
+     * @param expires - cookie 到期時間
+     */
+    var setCookieString = function (key, value, path, expires) {
+        config.path = path || '/';
+        config.expires = expires || null;
+        $cookies.put(key, value, config);
+    }
+
+    /**
+     * @description 寫入 cookie 字串值
+     * @param key - cookie key
+     * @param value - cookie value
+     * @param path - 要寫入的 cookie 應用程式路徑位置 (預設為根路徑)
+     * @param expires - cookie 到期時間
+     */
+    var setCookieObject = function (key, value, path, expires) {
+        config.path = path || '/';
+        config.expires = expires || null;
+        $cookies.putObject(key, value, config);
+    }
+
+    return {
+        setCookieString: setCookieString,
+        setCookieObject: setCookieObject
     }
 
 }]);
@@ -296,8 +353,8 @@ cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesSer
 
         /**
          * @description 依據 Cookie 名稱刪除相對應的值
-         * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
          * @param name - Cookie 名稱
+         * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
          * @param key - Cookie 值 key 名
          * @param symbo - 多個 Cookie 值的分隔符號
          */
@@ -328,8 +385,18 @@ cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesSer
             }
         }
 
+        /**
+        * @description 依據 Cookie key 刪除相對應的物件
+        * @param key - Cookie key
+        * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
+        */
+        var deleteCookieObject = function (key, path) {
+            $cookies.remove(key, { path: path || '/' });
+        }
+
         return {
-            deleteCookieString: deleteCookieString
+            deleteCookieString: deleteCookieString,
+            deleteCookieObject: deleteCookieObject
         }
 
     }]);
