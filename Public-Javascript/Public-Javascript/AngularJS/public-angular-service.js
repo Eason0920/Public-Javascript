@@ -335,9 +335,20 @@ cookiesServiceModule.factory('setCookiesService', ['$cookies', function ($cookie
      * @param expires - cookie 到期時間
      */
     var setCookieObject = function (key, value, path, expires) {
+        var cookieObject = $cookies.getObject(key);
         config.path = path || '/';
         config.expires = expires || null;
-        $cookies.putObject(key, value, config);
+
+        //判斷是否已有相同名稱的 cookie 名稱
+        if (cookieObject) {
+            Object.keys(value).forEach(function (key) {
+                cookieObject[key] = value[key];
+            });
+
+            $cookies.putObject(key, cookieObject, config);
+        } else {
+            $cookies.putObject(key, value, config);
+        }
     }
 
     return {
@@ -348,13 +359,13 @@ cookiesServiceModule.factory('setCookiesService', ['$cookies', function ($cookie
 }]);
 
 //刪除 Cookies 內容服務
-cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesService',
-    function ($cookies, getCookiesService) {
+cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesService', 'setCookiesService',
+    function ($cookies, getCookiesService, setCookiesService) {
 
         /**
          * @description 依據 Cookie 名稱刪除相對應的值
          * @param name - Cookie 名稱
-         * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
+         * @param path - 要刪除的 Cookie 存放位置(預設為根路徑)
          * @param key - Cookie 值 key 名
          * @param symbo - 多個 Cookie 值的分隔符號
          */
@@ -388,15 +399,32 @@ cookiesServiceModule.factory('deleteCookiesService', ['$cookies', 'getCookiesSer
         /**
         * @description 依據 Cookie key 刪除相對應的物件
         * @param key - Cookie key
-        * @param path - 要異動的 Cookie 使用 Url 路徑(預設為根路徑)
+        * @param path - 要刪除的 Cookie 存放位置(預設為根路徑)
         */
         var deleteCookieObject = function (key, path) {
             $cookies.remove(key, { path: path || '/' });
         }
 
+        /**
+        * @description 依據 Cookie key 刪除相對應的物件
+        * @param key - Cookie key
+        * @param subKey - 要刪除 Cookie 內的物件 Key 名
+        * @param path - 未被刪除的 Cookie 資料存放位置(預設為根路徑)
+        * @param expires - 未被刪除的 Cookie 資料到期時間
+        */
+        var deleteCookieObjectSubKey = function (key, subKey, path, expires) {
+            var cookieObject = $cookies.getObject(key);
+            if (cookieObject.hasOwnProperty(subKey)) {
+                delete cookieObject[subKey];
+                deleteCookieObject(key);
+                setCookiesService.setCookieObject(key, cookieObject, path, expires);
+            }
+        }
+
         return {
             deleteCookieString: deleteCookieString,
-            deleteCookieObject: deleteCookieObject
+            deleteCookieObject: deleteCookieObject,
+            deleteCookieObjectSubKey: deleteCookieObjectSubKey
         }
 
     }]);
