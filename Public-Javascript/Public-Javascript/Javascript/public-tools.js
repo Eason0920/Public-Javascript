@@ -8,6 +8,11 @@
  * @author Eason
  * @since 20161003
  * @version 2
+ * 
+ * @description 增加 stringFormat、stringEndWith、stringStartWith 字串擴充函式
+ * @author Eason
+ * @since 20170222
+ * @version 3
  */
 
 //XML物件轉字串
@@ -99,4 +104,25 @@ var isNumberKeyCode = function (e) {
         return false;
     }
     return true;
+}
+
+//字串使用 .NET string.format 功能
+var stringFormat = function () {
+    var s = arguments[0];
+    for (var i = 0; i < arguments.length - 1; i++) {
+        var reg = new RegExp("\\{" + i + "\\}", "gm");
+        s = s.replace(reg, arguments[i + 1]);
+    }
+
+    return s;
+}
+
+//檢查字串結尾是否有包含指定文字
+var stringEndWith = function (originString, endWithString) {
+    return (originString.substr(originString.length - endWithString.length) === endWithString);
+}
+
+//檢查字串開頭是否有包含指定文字
+var stringStartWith = function (originString, startWithString) {
+    return (originString.substr(0, startWithString.length) === startWithString);
 }
