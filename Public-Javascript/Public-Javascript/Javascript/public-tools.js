@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @description Javascript 公用函式庫版本建立
  * @author Eason
  * @since 20160602
@@ -59,7 +59,7 @@ var detectIEVersion = function (ver) {
 //檢視主控台自訂的除錯記錄
 //可傳入要查看的物件或使用格式字元傳入多參數(格式字元, 參數)
 var watch = function () {
-    if(window.console){
+    if (window.console && window.console.debug) {
         if (arguments.length > 1) {
             console.debug.apply(console, arguments);
         } else {
