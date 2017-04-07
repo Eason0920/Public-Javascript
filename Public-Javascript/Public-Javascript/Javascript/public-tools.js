@@ -89,7 +89,7 @@ var detectObjAndLength = function (obj, content) {
 //shareText：要分享的文字
 //useOpen：是否使用另開視窗
 var lineShare = function (shareText, useOpen) {
-    var url = 'http://line.me/R/msg/text/?' + lineShare;
+    var url = 'http://line.me/R/msg/text/?' + shareText;
     if (useOpen) {
         top.window.open(url);
     } else {
